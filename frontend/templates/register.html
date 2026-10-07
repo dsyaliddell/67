@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация — Конференции.РФ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Регистрация</h1>
+    <form id="registerForm">
+        <input type="text" id="login" placeholder="Логин (латиница, ≥ 6 симв.)" required>
+        <input type="password" id="password" placeholder="Пароль (≥ 8 симв.)" required>
+        <input type="text" id="fio" placeholder="ФИО (кириллица)" required>
+        <input type="text" id="phone" placeholder="8(XXX)XXX-XX-XX" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <button type="submit">Создать пользователя</button>
+    </form>
+    <div id="message"></div>
+    <p>Уже зарегистрированы? <a href="/api/auth/login">Войти</a></p>
+</div>
+<script src="{{ url_for('static', filename='js/register.js') }}"></script>
+</body>
+</html>

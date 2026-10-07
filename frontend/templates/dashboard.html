@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Мои заявки</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Мои заявки</h1>
+    <a href="/create_request" class="btn">Создать заявку</a>
+    <table id="requestsTable">
+        <thead>
+        <tr>
+            <th>№</th><th>Мероприятие</th><th>Дата</th>
+            <th>Место</th><th>Статус</th><th>Создана</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+<script>
+    fetch('/api/requests')
+        .then(r => r.json())
+        .then(data => {
+            const tbody = document.querySelector('#requestsTable tbody');
+            if (!data.success) return;
+            data.requests.forEach(r => {
+                tbody.insertAdjacentHTML('beforeend', `
+                    <tr>
+                        <td>${r.id}</td>
+                        <td>${r.event_name}</td>
+                        <td>${r.date}</td>
+                        <td>${r.place}</td>
+                        <td>${r.status_name}</td>
+                        <td>${r.created_at}</td>
+                    </tr>
+                `);
+            });
+        });
+</script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель администратора</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Панель администратора</h1>
+    <table id="adminTable">
+        <thead>
+        <tr>
+            <th>№</th><th>Пользователь</th><th>Мероприятие</th>
+            <th>Дата</th><th>Статус</th><th>Изменить</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+<script>
+    async function loadRequests() {
+        const res = await fetch('/api/admin/requests');
+        const data = await res.json();
+        const tbody = document.querySelector('#adminTable tbody');
+        tbody.innerHTML = '';
+        if (!data.success) return;
+        data.requests.forEach(r => {
+            tbody.insertAdjacentHTML('beforeend', `
+                <tr>
+                    <td>${r.id}</td>
+                    <td>${r.login}</td>
+                    <td>${r.event_name}</td>
+                    <td>${r.date}</td>
+                    <td>${r.status_name}</td>
+                    <td>
+                        <select onchange="changeStatus(${r.id}, this.value)">
+                            <option value="1" ${r.status_name === 'Новая' ? 'selected' : ''}>Новая</option>
+                            <option value="2" ${r.status_name === 'Мероприятие назначено' ? 'selected' : ''}>Мероприятие назначено</option>
+                            <option value="3" ${r.status_name === 'Завершено' ? 'selected' : ''}>Завершено</option>
+                        </select>
+                    </td>
+                </tr>
+            `);
+        });
+    }
+
+    async function changeStatus(requestId, statusId) {
+        await fetch(`/api/admin/requests/${requestId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status_id: parseInt(statusId) })
+        });
+        loadRequests();
+    }
+
+    loadRequests();
+</script>
+</body>
+</html>
