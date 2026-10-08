@@ -1,21 +1,27 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Вход — Конференции.РФ</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-<div class="container">
-    <h1>Авторизация</h1>
-    <form id="loginForm">
-        <input type="text" id="login" placeholder="Логин" required>
-        <input type="password" id="password" placeholder="Пароль" required>
-        <button type="submit">Войти</button>
-    </form>
-    <div id="message"></div>
-    <p>Ещё не зарегистрированы? <a href="/api/auth/register">Регистрация</a></p>
-</div>
-<script src="{{ url_for('static', filename='js/login.js') }}"></script>
-</body>
-</html>
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const payload = {
+        login:    document.getElementById('login').value.trim(),
+        password: document.getElementById('password').value
+    };
+    const msg = document.getElementById('message');
+
+    try {
+        const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+            window.location.href = data.redirect;
+        } else {
+            msg.className = 'error';
+            msg.textContent = data.message;
+        }
+    } catch (err) {
+        msg.className = 'error';
+        msg.textContent = 'Ошибка сервера';
+    }
+});

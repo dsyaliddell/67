@@ -1,48 +1,15 @@
-import os
-from flask import Flask
+from flask import Flask, render_template
+from backend.routes.auth_routes import auth_bp
+from backend.routes.request_routes import request_bp
+from backend.routes.admin_routes import admin_bp
+from backend.models.user import User
 
 app = Flask(
     __name__,
     template_folder='../frontend/templates',
     static_folder='../frontend/static'
 )
-
-# ═══════════════════════════════════════════════════════════
-# БЕЗОПАСНАЯ НАСТРОЙКА СЕССИЙ И COOKIES
-# ═══════════════════════════════════════════════════════════
-
-# Секретный ключ: длинный, случайный, из переменной окружения
-app.secret_key = os.environ.get(
-    'FLASK_SECRET_KEY',
-    'dev-fallback-key-change-in-production-32bytes-min'
-)
-
-# Флаги безопасности cookies
-app.config.update(
-    # Только HTTPS (в разработке False, в продакшене True)
-    SESSION_COOKIE_SECURE=False,  # Для production: True
-
-    # Запрет доступа из JavaScript (защита от XSS)
-    SESSION_COOKIE_HTTPONLY=True,
-
-    # Защита от CSRF: cookies не отправляются при cross-site запросах
-    SESSION_COOKIE_SAMESITE='Lax',
-
-    # Время жизни сессии: 30 минут
-    PERMANENT_SESSION_LIFETIME=1800,
-
-    # Имя cookie
-    SESSION_COOKIE_NAME='conf_session',
-)
-
-# ═══════════════════════════════════════════════════════════
-# РЕГИСТРАЦИЯ BLUEPRINTS
-# ═══════════════════════════════════════════════════════════
-
-from backend.routes.auth_routes import auth_bp
-from backend.routes.request_routes import request_bp
-from backend.routes.admin_routes import admin_bp
-from backend.models.user import User
+app.secret_key = 'conf2027_secret_key_demo'
 
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(request_bp)
@@ -70,4 +37,4 @@ def init_admin():
 
 if __name__ == '__main__':
     init_admin()
-    app.run(debug=False, host='127.0.0.1', port=5000)
+    app.run(debug=True, host='127.0.0.1', port=5000)
